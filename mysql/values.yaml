@@ -1,0 +1,6 @@
+deployments:
+  #Install metrics in Kubernetes Docker Desktop
+  #Allow Horizontal Pod Autoscaling/Vertical Pod Autoscaling
+  dockerDesktopInstallMetrics: false
+  databaseName: dummy
+  #If OS Windows use: /run/desktop/mnt/host/<...>

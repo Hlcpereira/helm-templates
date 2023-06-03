@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-service
+  labels:
+    app: {{ .Release.Name }}-service
+spec:
+  type: NodePort
+  ports:
+  - port: 3306
+    name: database-port
+  selector:
+    app: {{ .Release.Name }}-db-statefulset
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-db-statefulset
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-db-statefulset
+  serviceName: {{ .Release.Name }}-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-db-statefulset
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: mysql
+        image: mysql
+        env:
+        - name: MYSQL_USER
+          value: user
+        - name: MYSQL_PASSWORD
+          value: password
+        - name: MYSQL_ROOT_PASSWORD
+          value: password
+        - name: MYSQL_DATABASE
+          value: {{ .Values.deployments.databaseName }}
+        ports:
+        - containerPort: 3306
+          name: database-port
